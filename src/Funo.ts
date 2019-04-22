@@ -1,4 +1,4 @@
-import { Client } from 'discord.js'
+import { Client, Message } from 'discord.js'
 
 import { Logger } from '@/utils'
 
@@ -9,11 +9,17 @@ export class Funo extends Client {
   constructor(token: string) {
     super()
 
+    this.on('message', msg => this.onMessageReceived(msg))
+
     this.login(token).then(() => this.onLoggedIn())
   }
 
   private onLoggedIn() {
-    this.logger.info('Logged in')
+    this.logger.info('Logged in as ' + this.user.username)
+  }
+
+  private onMessageReceived(msg: Message){
+    this.logger.debug('Got ' + msg)
   }
 
 }
