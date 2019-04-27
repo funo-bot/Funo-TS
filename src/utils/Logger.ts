@@ -21,8 +21,11 @@ export default class Logger {
   }
 
   private print(type: string, ...args: any) {
+    const time = new Date().toLocaleTimeString('en-GB', { hour12: false })
     // tslint:disable-next-line:no-console
-    console.log(`[${chalk.magenta(this.systemName)}.${chalk.cyan(this.moduleName)}] [${type}]`, ...args)
+    console.log(
+      `[${chalk.yellow(time)}] [${chalk.magenta(this.systemName)}.${chalk.cyan(this.moduleName)}] [${type}]`, ...args,
+    )
   }
 
 }
