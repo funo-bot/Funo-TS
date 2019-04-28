@@ -6,7 +6,7 @@
       "es6"
     ],
     "rootDir": ".",
-    "baseUrl": ".",
+    "baseUrl": "src/",
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
