@@ -4,4 +4,5 @@
 
 export * from './Cat'
 export * from './Dog'
+export * from './GuildInfo'
 export * from './Prefix'

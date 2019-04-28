@@ -41,6 +41,12 @@ export class Funo extends Client {
     for await (const command of Object.keys(cmds)) {
       const cmd = cmds[command]
       this.commands[cmd.name.toLowerCase()] = cmd
+
+      if (cmd.aliases) {
+        for await (const alias of cmd.aliases) {
+          this.commands[alias] = cmd
+        }
+      }
     }
   }
 
