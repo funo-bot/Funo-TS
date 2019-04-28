@@ -2,13 +2,11 @@
   "compilerOptions": {
     "target": "ESNEXT",
     "module": "commonjs",
-    "lib": ["es6"],
-    "outDir": "lib",
+    "lib": [
+      "es6"
+    ],
     "rootDir": ".",
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,

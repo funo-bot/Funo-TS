@@ -1,7 +1,7 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 
-import { GuildConfig } from '@/interfaces/GuildConfig'
-import { Logger } from '.'
+import { GuildConfig } from '../interfaces/GuildConfig'
+import { defaultConfig, Logger } from '../utils'
 
 export class DB {
 
@@ -12,17 +12,21 @@ export class DB {
 
   private guilds!: Collection
 
+  private guildConfig: {
+    [k: string]: Partial<GuildConfig>,
+  } = {}
+
   constructor(
     private mongoUrl: string,
     private mongoUser: string,
     private mongoPass: string,
     private mongoDb: string = 'funo',
   ) {
-    if(!mongoUrl) throw new Error('')
+    if (!mongoUrl) throw new Error('')
   }
 
   public async init() {
-    if(this.initialised) return this.logger.error('DB.init can only be called once.')
+    if (this.initialised) return this.logger.error('DB.init can only be called once.')
     this.initialised = true
 
     const client = await MongoClient.connect(this.mongoUrl, {
@@ -39,8 +43,31 @@ export class DB {
     this.guilds = this.db.collection('guilds')
   }
 
-  public async getGuildConfig(id: string): Promise<GuildConfig | null> {
-    return this.guilds.findOne({ guildId: id }) || null
+  public async getGuild(id: string): Promise<GuildConfig> {
+    let config: Partial<GuildConfig> = this.guildConfig[id]
+
+    if (!config) {
+      this.guildConfig[id] = config = (await this.guilds.findOne({ guildId: id }) || {})
+    }
+
+    return Object.assign(defaultConfig, config)
+  }
+
+  public async getPrefix(guildId: string): Promise<string> {
+    return (await this.getGuild(guildId)).prefix
+  }
+
+  public async setPrefix(guildId: string, prefix: string) {
+    if (prefix === await this.getPrefix((guildId))) return
+
+    this.guildConfig[guildId].prefix = prefix
+    await this.updateGuild(guildId, { prefix })
+  }
+
+  private async updateGuild(guildId: string, doc: Partial<GuildConfig>) {
+    await this.guilds.updateOne({ guildId }, {
+      $set: doc,
+    }, { upsert: true })
   }
 
 }

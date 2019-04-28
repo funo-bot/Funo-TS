@@ -1,10 +1,11 @@
 {
   "name": "Funo-TS",
   "version": "1.0.0",
-  "main": "src/main.ts",
+  "main": "main.ts",
   "repository": "https://github.com/funo-bot/Funo-TS.git",
   "scripts": {
-    "start": "nodemon --watch ./**/*.ts --exec ts-node -r tsconfig-paths/register main.ts"
+    "start": "node -r ts-node/register main.ts",
+    "gb": "barrelsby -d src -l below -D -q -S"
   },
   "dependencies": {
     "chalk": "^2.4.2",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@types/mongodb": "^3.1.25",
     "@types/node": "^11.13.6",
+    "barrelsby": "^2.0.0",
     "nodemon": "^1.18.11",
     "ts-node": "^8.1.0",
     "tsconfig-paths": "^3.8.0",

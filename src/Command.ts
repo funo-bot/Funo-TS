@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
 
-import { Funo } from '@/Funo'
+import { Funo } from './Funo'
 
 export enum Category {
   Fun,
@@ -18,6 +18,6 @@ export interface Command {
   aliases?: string[]
   permissions?: string[]
 
-  run(funo: Funo, msg: Message): void
+  run(funo: Funo, msg: Message, args: string[]): Promise<any>
 
 }

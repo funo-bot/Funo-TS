@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-export default class Logger {
+export class Logger {
 
   constructor(private moduleName: string, private systemName: string = 'Funo') { }
 
