@@ -3,6 +3,8 @@ import { Message } from 'discord.js'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 
+import fetch from 'node-fetch'
+
 export const Cat = new (class implements Command {
 
   public name = 'cat'
@@ -11,7 +13,10 @@ export const Cat = new (class implements Command {
   public aliases = ['kitten', 'cats']
 
   public async run(funo: Funo, msg: Message) {
-    //
+    const body = fetch('http://aws.random.cat/meow')
+    .then(res => res.json())
+
+    msg.channel.send(body)
   }
 
 })()
