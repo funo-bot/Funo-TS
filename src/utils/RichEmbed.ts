@@ -2,7 +2,13 @@ import { RichEmbed as RE } from 'discord.js'
 
 export type RichEmbedField = [string, (string | number)?, boolean?]
 
-export function RichEmbed(title: string, desc?: string | null, fields: RichEmbedField[] = [], icon?: string) {
+export function RichEmbed(
+  title: string,
+  desc?: string | null,
+  fields: RichEmbedField[] = [],
+  icon?: string | null,
+  color: string = 'PURPLE',
+) {
   let realTitle: string | null = title
   if(!desc) {
     desc = title
@@ -11,7 +17,7 @@ export function RichEmbed(title: string, desc?: string | null, fields: RichEmbed
 
   const embed = new RE()
     .setDescription(desc)
-    .setColor('PURPLE')
+    .setColor(color)
 
   if(realTitle) embed.setThumbnail(realTitle)
   if(icon) embed.setThumbnail(icon)

@@ -51,6 +51,8 @@ export class Funo extends Client {
   }
 
   private async onMessageReceived(msg: Message) {
+    if(!msg.guild) return
+
     this.logger.debug(`Received '${msg.content}'`)
 
     const prefix = await this.db.getPrefix(msg.guild.id)
