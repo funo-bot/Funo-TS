@@ -4,5 +4,5 @@
 
 export * from './DB'
 export * from './defaultConfig'
+export * from './helpers'
 export * from './Logger'
-export * from './RichEmbed'

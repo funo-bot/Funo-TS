@@ -10,7 +10,7 @@ export function RichEmbed(
   color: string = 'PURPLE',
 ) {
   let realTitle: string | null = title
-  if(!desc) {
+  if (!desc) {
     desc = title
     realTitle = null
   }
@@ -19,12 +19,26 @@ export function RichEmbed(
     .setDescription(desc)
     .setColor(color)
 
-  if(realTitle) embed.setThumbnail(realTitle)
-  if(icon) embed.setThumbnail(icon)
+  if (realTitle) embed.setTitle(realTitle)
+  if (icon) embed.setThumbnail(icon)
 
-  for(const [fTitle, fDesc, fInline] of fields) {
+  for (const [fTitle, fDesc, fInline] of fields) {
     embed.addField(fTitle, fDesc, typeof fInline === 'undefined' ? true : fInline)
   }
 
   return embed
+}
+
+export function Error(msg: string) {
+  return RichEmbed('Error', msg)
+}
+
+export function Image(src: string, title?: string, desc?: string) {
+  const e = new RE()
+    .setThumbnail(src)
+
+  if (title) e.setTitle(title)
+  if (desc) e.setDescription(desc)
+
+  return e
 }

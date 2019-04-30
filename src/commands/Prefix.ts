@@ -2,7 +2,7 @@ import { Message } from 'discord.js'
 
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
-import { RichEmbed } from '../utils'
+import { Error, RichEmbed } from '../utils'
 
 export const Prefix = new (class implements Command {
 
@@ -19,7 +19,7 @@ export const Prefix = new (class implements Command {
     }
 
     if (!msg.member.hasPermission('MANAGE_GUILD')) {
-      return msg.channel.send(RichEmbed('You lack the `MANAGE_GUILD` permisson'))
+      return msg.channel.send(Error('You lack the `MANAGE_GUILD` permisson'))
     }
 
     await funo.db.setPrefix(msg.guild.id, args[0])

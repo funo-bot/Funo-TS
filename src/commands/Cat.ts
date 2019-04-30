@@ -14,7 +14,7 @@ export const Cat = new (class implements Command {
 
   public async run(funo: Funo, msg: Message) {
     const body = fetch('http://aws.random.cat/meow')
-    .then(res => res.json())
+      .then(res => res.json())
 
     msg.channel.send(body)
   }

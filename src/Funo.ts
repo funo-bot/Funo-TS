@@ -51,7 +51,7 @@ export class Funo extends Client {
   }
 
   private async onMessageReceived(msg: Message) {
-    if(!msg.guild) return
+    if (!msg.guild) return
 
     this.logger.debug(`Received '${msg.content}'`)
 
@@ -68,14 +68,10 @@ export class Funo extends Client {
 
       if (!this.commands[cmdStr]) return
 
-      msg.channel.startTyping()
-
       const cmd = this.commands[cmdStr]
       await cmd.run(this, msg, args).catch(err => {
-        msg.channel.stopTyping()
+        //
       })
-
-      msg.channel.stopTyping()
     }
   }
 
