@@ -1,4 +1,5 @@
-import { Client, Message } from 'discord.js'
+import { Client, Message, TextChannel } from 'discord.js'
+import { PlayerManager } from 'discord.js-lavalink'
 
 import { Command } from './Command'
 import * as cmdList from './commands'
@@ -8,6 +9,7 @@ import { DB, Logger } from './utils'
 export class Funo extends Client {
 
   public db: DB
+  public playerManager!: PlayerManager
 
   private logger: Logger = new Logger('Core')
 
@@ -27,11 +29,19 @@ export class Funo extends Client {
 
   private async doLogin(token: string) {
     await this.db.init()
-    await this.loadCommands()
 
     await this.login(token)
 
+    this.playerManager = new PlayerManager(this, [
+      { host: 'localhost', port: 8080, password: 'pass' },
+    ], {
+      user: this.user.id,
+      shards: 0,
+    })
+
     this.logger.info('Logged in as ' + this.user.username)
+
+    await this.loadCommands()
   }
 
   private async loadCommands() {
