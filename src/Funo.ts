@@ -15,7 +15,7 @@ export class Funo extends Client {
     [k: string]: Command,
   } = {}
 
-  constructor(token: string, private config: Config) {
+  constructor(token: string, public config: Config) {
     super()
 
     this.db = new DB(config.db.url, config.db.user, config.db.password, config.db.name)
@@ -58,10 +58,17 @@ export class Funo extends Client {
     const prefix = await this.db.getPrefix(msg.guild.id)
     if (
       msg.content &&
-      msg.content.startsWith(prefix) &&
-      msg.content.trim() !== prefix
+      (
+        (msg.content.startsWith(prefix) && msg.content.trim() !== prefix) ||
+        (msg.content.startsWith(`<@!${this.user.id}>`) && msg.content.trim() !== `<@!${this.user.id}>`) ||
+        (msg.content.startsWith(`<@${this.user.id}>`) && msg.content.trim() !== `<@${this.user.id}>`)
+      )
     ) {
-      const content = msg.content.replace(prefix, '').trim().toLowerCase()
+      const content = msg.content
+        .replace(new RegExp(`^(${prefix})`, 'gim'), '')
+        .replace(new RegExp(`^(<@!?${this.user.id}>)`, 'gim'), '')
+        .trim()
+        .toLowerCase()
       const contentParts = content.split(/\s/gm)
       const cmdStr = contentParts[0]
       const args = contentParts.slice(1)

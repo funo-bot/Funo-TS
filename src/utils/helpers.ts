@@ -1,6 +1,6 @@
 import { RichEmbed as RE } from 'discord.js'
 
-export type RichEmbedField = [string, (string | number)?, boolean?]
+export type RichEmbedField = [string, (string | number), boolean?]
 
 export function RichEmbed(
   title: string,
@@ -35,7 +35,7 @@ export function Error(msg: string) {
 
 export function Image(src: string, title?: string, desc?: string) {
   const e = new RE()
-    .setThumbnail(src)
+    .setImage(src)
 
   if (title) e.setTitle(title)
   if (desc) e.setDescription(desc)
