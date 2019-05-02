@@ -1,6 +1,7 @@
 import { Message } from 'discord.js'
 
 import { Funo } from './Funo'
+import { Guild } from './Guild'
 
 export enum Category {
   Fun,
@@ -10,14 +11,14 @@ export enum Category {
   ImageManipulation,
 }
 
-export interface Command {
+export abstract class Command {
 
-  name: string
-  category: Category
-  description: string
-  aliases?: string[]
-  permissions?: string[]
+  public abstract name: string
+  public abstract category: Category
+  public abstract description: string
+  public aliases: string[] = []
+  public permissions: string[] = []
 
-  run(funo: Funo, msg: Message, args: string[]): Promise<any>
+  public abstract run(funo: Funo, msg: Message, args: string[], guild: Guild): Promise<any>
 
 }

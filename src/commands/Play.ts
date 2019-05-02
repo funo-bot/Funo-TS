@@ -6,9 +6,10 @@ import { Node } from 'discord.js-lavalink'
 import { URLSearchParams } from 'url'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
+import { Guild, GuildTrack } from '../Guild'
 import { Error, Image, RichEmbed } from '../utils'
 
-export const Play = new (class implements Command {
+export const Play = new (class extends Command {
 
   public name = 'play'
   public category = Category.Music
@@ -16,16 +17,8 @@ export const Play = new (class implements Command {
   public aliases = ['p', 'add']
   public permissions = []
 
-  public async run(funo: Funo, msg: Message, args: string[]) {
-    const player = await funo.playerManager.join({
-      guild: msg.guild.id,
-      channel: msg.member.voiceChannel.id,
-      host: funo.playerManager.nodes.first().host,
-    })
-
-    if (!msg.member.voiceChannel) {
-      return msg.channel.send(Error('You must be in a voice channel to use this command'))
-    }
+  public async run(funo: Funo, msg: Message, args: string[], guild: Guild) {
+    if (!msg.member.voiceChannel) return msg.channel.send(Error('You must be in a voice channel to use this command'))
 
     const { results, pageInfo } = await search(args.join(' '), {
       maxResults: 1,
@@ -36,17 +29,48 @@ export const Play = new (class implements Command {
 
     if (!results.length) return msg.channel.send(Error('No results were found for that query'))
 
+    let player = guild.player
+
+    if(!player) {
+      player = guild.player = await funo.playerManager.join({
+        guild: msg.guild.id,
+        channel: msg.member.voiceChannel.id,
+        host: funo.playerManager.nodes.first().host,
+      })
+    }
+
     const { link, thumbnails } = results[0]
 
     const { track, info: { title, author, length } } = await this.getTrackByLink(link, funo.playerManager.nodes.first())
-    player.play(track)
 
-    msg.channel.send(
-      RichEmbed(title, author, [], thumbnails.high ? thumbnails.high.url : null)
-        .setURL(link)
-        .setAuthor('Now Playing')
-        .setFooter(this.duration(length)),
-    )
+    const guildTrack: GuildTrack = {
+      link,
+      track,
+      title,
+      author,
+      length,
+      thumb: thumbnails.high ? thumbnails.high.url : null,
+    }
+    if(!guild.queue.length) {
+      guild.queue.push(guildTrack)
+      player.play(track)
+
+      msg.channel.send(
+        RichEmbed(title, author, [], thumbnails.high ? thumbnails.high.url : null)
+          .setURL(link)
+          .setAuthor('Now Playing')
+          .setFooter(`${this.duration(length)} - Added by ${msg.author.tag}`),
+      )
+    } else {
+      guild.queue.push(guildTrack)
+
+      msg.channel.send(
+        RichEmbed(title, author, [], thumbnails.high ? thumbnails.high.url : null)
+          .setURL(link)
+          .setAuthor('Added to Queue')
+          .setFooter(`${this.duration(length)} - Added by ${msg.author.tag}`),
+      )
+    }
   }
 
   private async getTrackByLink(link: string, node: Node) {

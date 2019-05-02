@@ -1,8 +1,9 @@
-import { Client, Message, TextChannel } from 'discord.js'
+import { Client, Message } from 'discord.js'
 import { PlayerManager } from 'discord.js-lavalink'
 
 import { Command } from './Command'
 import * as cmdList from './commands'
+import { Guild } from './Guild'
 import { Config } from './interfaces/Config'
 import { DB, Logger } from './utils'
 
@@ -15,6 +16,10 @@ export class Funo extends Client {
 
   private commands: {
     [k: string]: Command,
+  } = {}
+
+  private guildInstances: {
+    [k: string]: Guild,
   } = {}
 
   constructor(token: string, public config: Config) {
@@ -85,8 +90,16 @@ export class Funo extends Client {
 
       if (!this.commands[cmdStr]) return
 
+      let guild: Guild
+      if(this.guildInstances[msg.guild.id]) {
+        guild = this.guildInstances[msg.guild.id]
+      } else {
+        guild = new Guild(msg.guild)
+        this.guildInstances[msg.guild.id] = guild
+      }
+
       const cmd = this.commands[cmdStr]
-      await cmd.run(this, msg, args).catch(err => {
+      await cmd.run(this, msg, args, guild).catch(err => {
         //
       })
     }
