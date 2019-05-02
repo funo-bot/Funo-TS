@@ -5,7 +5,7 @@ import { Funo } from '../Funo'
 
 import fetch from 'node-fetch'
 
-export const Cat = new (class implements Command {
+export const Cat = new (class extends Command {
 
   public name = 'cat'
   public category = Category.Fun

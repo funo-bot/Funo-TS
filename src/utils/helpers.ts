@@ -1,6 +1,7 @@
-import { RichEmbed as RE } from 'discord.js'
+import { RichEmbed as RE, User } from 'discord.js'
+import { GuildTrack } from '../Guild'
 
-export type RichEmbedField = [string, (string | number)?, boolean?]
+export type RichEmbedField = [string, (string | number), boolean?]
 
 export function RichEmbed(
   title: string,
@@ -35,10 +36,23 @@ export function Error(msg: string) {
 
 export function Image(src: string, title?: string, desc?: string) {
   const e = new RE()
-    .setThumbnail(src)
+    .setImage(src)
 
   if (title) e.setTitle(title)
   if (desc) e.setDescription(desc)
 
   return e
+}
+
+export function Track(embedTitle: string, track: GuildTrack) {
+  const re = new RE()
+    .setAuthor(embedTitle)
+    .setTitle(track.title)
+    .setDescription(track.author)
+    .setURL(track.link)
+    .setFooter(`${track.duration} - Added by ${track.addedBy.tag}`)
+
+  if (track.thumb) re.setThumbnail(track.thumb)
+
+  return re
 }

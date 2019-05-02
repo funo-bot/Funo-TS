@@ -4,7 +4,7 @@ import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Error, RichEmbed } from '../utils'
 
-export const Ban = new (class implements Command {
+export const Ban = new (class extends Command {
 
   public name = 'ban'
   public category = Category.Moderation

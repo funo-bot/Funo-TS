@@ -5,16 +5,20 @@ import { Funo } from './src/Funo'
 import { Logger } from './src/utils'
 
 (async () => {
-  if(!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not set in ENV')
-  if(!process.env.MONGO_URL) throw new Error('MONGO_URL is not set in ENV')
-  if(!process.env.MONGO_USER) throw new Error('MONGO_USER is not set in ENV')
-  if(!process.env.MONGO_PASS) throw new Error('MONGO_PASS is not set in ENV')
-  if(!process.env.OAUTH_SECRET) throw new Error('OAUTH_SECRET is not set in ENV')
+  if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not set in ENV')
+  if (!process.env.MONGO_URL) throw new Error('MONGO_URL is not set in ENV')
+  if (!process.env.MONGO_USER) throw new Error('MONGO_USER is not set in ENV')
+  if (!process.env.MONGO_PASS) throw new Error('MONGO_PASS is not set in ENV')
+  if (!process.env.OAUTH_SECRET) throw new Error('OAUTH_SECRET is not set in ENV')
+  if (!process.env.FUNO_YT_KEY) throw new Error('FUNO_YT_KEY is not set in ENV')
 
   // tslint:disable
   new Funo(
     process.env.DISCORD_TOKEN,
     {
+      music: {
+        ytKey: process.env.FUNO_YT_KEY,
+      },
       db: {
         url: process.env.MONGO_URL,
         user: process.env.MONGO_USER,
