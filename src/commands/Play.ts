@@ -1,4 +1,4 @@
-import { Message } from 'discord.js'
+import { Message, TextChannel } from 'discord.js'
 import fetch from 'node-fetch'
 import search from 'youtube-search'
 
@@ -7,7 +7,7 @@ import { URLSearchParams } from 'url'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild, GuildTrack } from '../Guild'
-import { Error, Image, RichEmbed } from '../utils'
+import { Error, Track } from '../utils'
 
 export const Play = new (class extends Command {
 
@@ -31,7 +31,7 @@ export const Play = new (class extends Command {
 
     let player = guild.player
 
-    if(!player) {
+    if (!player) {
       player = guild.player = await funo.playerManager.join({
         guild: msg.guild.id,
         channel: msg.member.voiceChannel.id,
@@ -49,27 +49,21 @@ export const Play = new (class extends Command {
       title,
       author,
       length,
+      duration: this.duration(length),
       thumb: thumbnails.high ? thumbnails.high.url : null,
+      addedBy: msg.author,
     }
-    if(!guild.queue.length) {
+
+    guild.queueChannel = (msg.channel as TextChannel)
+    if (!guild.queue.length) {
       guild.queue.push(guildTrack)
       player.play(track)
 
-      msg.channel.send(
-        RichEmbed(title, author, [], thumbnails.high ? thumbnails.high.url : null)
-          .setURL(link)
-          .setAuthor('Now Playing')
-          .setFooter(`${this.duration(length)} - Added by ${msg.author.tag}`),
-      )
+      msg.channel.send(Track('Now Playing', guildTrack))
     } else {
       guild.queue.push(guildTrack)
 
-      msg.channel.send(
-        RichEmbed(title, author, [], thumbnails.high ? thumbnails.high.url : null)
-          .setURL(link)
-          .setAuthor('Added to Queue')
-          .setFooter(`${this.duration(length)} - Added by ${msg.author.tag}`),
-      )
+      msg.channel.send(Track('Added to Queue', guildTrack))
     }
   }
 
