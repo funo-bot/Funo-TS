@@ -11,6 +11,8 @@ import { Logger } from './src/utils'
   if (!process.env.MONGO_PASS) throw new Error('MONGO_PASS is not set in ENV')
   if (!process.env.OAUTH_SECRET) throw new Error('OAUTH_SECRET is not set in ENV')
   if (!process.env.FUNO_YT_KEY) throw new Error('FUNO_YT_KEY is not set in ENV')
+  if (!process.env.LAVALINK_HOST) throw new Error('LAVALINK_HOST is not set in ENV')
+  if (!process.env.LAVALINK_PORT) throw new Error('LAVALINK_PORT is not set in ENV')
 
   // tslint:disable
   new Funo(
@@ -18,6 +20,8 @@ import { Logger } from './src/utils'
     {
       music: {
         ytKey: process.env.FUNO_YT_KEY,
+        lavalinkHost: process.env.LAVALINK_HOST,
+        lavalinkPort: parseInt(process.env.LAVALINK_PORT, 10),
       },
       db: {
         url: process.env.MONGO_URL,

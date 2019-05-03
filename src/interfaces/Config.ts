@@ -1,6 +1,8 @@
 export interface Config {
   music: {
     ytKey: string,
+    lavalinkHost: string,
+    lavalinkPort: number,
   },
   db: {
     url: string,

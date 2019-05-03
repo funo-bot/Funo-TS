@@ -38,7 +38,7 @@ export class Funo extends Client {
     await this.login(token)
 
     this.playerManager = new PlayerManager(this, [
-      { host: 'localhost', port: 8080, password: 'pass' },
+      { host: this.config.music.lavalinkHost, port: this.config.music.lavalinkPort, password: 'pass' },
     ], {
       user: this.user.id,
       shards: 0,
