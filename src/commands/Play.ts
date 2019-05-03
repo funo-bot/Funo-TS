@@ -23,8 +23,8 @@ export const Play = new (class extends Command {
     const { results, pageInfo } = await search(args.join(' '), {
       maxResults: 1,
       key: funo.config.music.ytKey,
-      videoCategoryId: '10',
-      type: 'video',
+      // videoCategoryId: '10',
+      // type: 'video',
     })
 
     if (!results.length) return msg.channel.send(Error('No results were found for that query'))

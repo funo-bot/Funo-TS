@@ -52,4 +52,11 @@ export class Guild {
     return this.queue[1]
   }
 
+  public removeSong(num: number) {
+    const track = this.queue[num - 1]
+    this.queue.splice(num - 1)
+
+    return track
+  }
+
 }
