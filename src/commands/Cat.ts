@@ -2,6 +2,7 @@ import { Message } from 'discord.js'
 
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
+import { Image } from 'utils'
 
 import fetch from 'node-fetch'
 
@@ -13,10 +14,12 @@ export const Cat = new (class extends Command {
   public aliases = ['kitten', 'cats']
 
   public async run(funo: Funo, msg: Message) {
-    const body = fetch('http://aws.random.cat/meow')
+    const body: any = fetch('http://aws.random.cat/meow')
       .then(res => res.json())
 
-    msg.channel.send(body)
+      msg.channel.send(Image(body.url, 'Meow 🐱')
+      .setColor('PURPLE')
+    )
   }
 
 })()
