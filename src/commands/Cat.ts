@@ -17,7 +17,7 @@ export const Cat = new (class extends Command {
     const body: any = await fetch('http://aws.random.cat/meow')
       .then(res => res.json())
 
-      msg.channel.send(Image(body.url, 'Meow 🐱')
+      msg.channel.send(Image(body.file, 'Meow 🐱')
       .setColor('PURPLE')
     )
   }
