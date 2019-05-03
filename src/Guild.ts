@@ -1,5 +1,6 @@
 import { Guild as GuildClass, TextChannel, User } from 'discord.js'
 import { Player } from 'discord.js-lavalink'
+import { Funo } from './Funo'
 import { RichEmbed, Track } from './utils'
 
 export interface GuildTrack {
@@ -19,13 +20,19 @@ export class Guild {
   public queueChannel: TextChannel | null = null
   private realPlayer: Player | null = null
 
-  constructor(private guild: GuildClass) { }
+  constructor(private guild: GuildClass, private funo: Funo) { }
 
   public get player() {
     return this.realPlayer
   }
 
   public set player(player: Player | null) {
+    if(this.realPlayer) {
+      this.realPlayer.disconnect()
+      this.realPlayer.destroy()
+      this.funo.playerManager.leave(this.guild.id)
+    }
+
     this.realPlayer = player
     if (!player) return
 
@@ -37,7 +44,9 @@ export class Guild {
 
         if (this.queueChannel) this.queueChannel.send(Track('Now Playing', this.queue[0]))
       } else if (this.queueChannel) {
-        this.queueChannel.send(RichEmbed('End of queue'))
+        this.queueChannel.send(RichEmbed('End of queue, leaving channel'))
+        this.player = null
+        this.queueChannel = null
       }
     })
   }

@@ -92,7 +92,7 @@ export class Funo extends Client {
       if(this.guildInstances[msg.guild.id]) {
         guild = this.guildInstances[msg.guild.id]
       } else {
-        guild = new Guild(msg.guild)
+        guild = new Guild(msg.guild, this)
         this.guildInstances[msg.guild.id] = guild
       }
 
