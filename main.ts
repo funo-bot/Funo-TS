@@ -2,7 +2,7 @@ import DiscordOauth from 'discord-oauth2'
 import Server from 'socket.io'
 
 import { Funo } from './src/Funo'
-import { Logger } from './src/utils'
+import { API, Logger } from './src/utils'
 
 (async () => {
   if (!process.env.DISCORD_TOKEN) throw new Error('DISCORD_TOKEN is not set in ENV')
@@ -14,9 +14,11 @@ import { Logger } from './src/utils'
   if (!process.env.LAVALINK_HOST) throw new Error('LAVALINK_HOST is not set in ENV')
   if (!process.env.LAVALINK_PORT) throw new Error('LAVALINK_PORT is not set in ENV')
 
+  const discordToken = process.env.DISCORD_TOKEN
+
   // tslint:disable
   new Funo(
-    process.env.DISCORD_TOKEN,
+    discordToken,
     {
       music: {
         ytKey: process.env.FUNO_YT_KEY,
@@ -39,6 +41,8 @@ import { Logger } from './src/utils'
   const oauth = (new (DiscordOauth as any) as DiscordOauth.oauth)
 
   io.on('connect', socket => {
+    let loggedIn: boolean = false
+
     socket.on('oauthCode', async (code: string, redirect_uri: string, scope: string, ack) => {
       ack(await oauth.tokenRequest({
         client_id: '332971222897786892',
@@ -49,9 +53,36 @@ import { Logger } from './src/utils'
         scope,
       }))
     })
+
+    socket.on('login', async token => {
+      if(loggedIn) return
+
+      // TODO: Verify token
+      loggedIn = true
+
+      const api = new API(token, discordToken)
+
+      socket.on('me', async ack => {
+        if(typeof ack !== 'function') return
+
+        ack(await api.me())
+      })
+
+      socket.on('guilds', async ack => {
+        if(typeof ack !== 'function') return
+
+        ack(await api.guilds())
+      })
+
+      socket.on('guild', async (id, ack) => {
+        if(typeof id !== 'string') return
+        if(typeof ack !== 'function') return
+
+        ack(await api.guild(id))
+      })
+    })
   })
 
   io.listen(ioPort)
   ioLogger.info(`Listening on *:${ioPort}`)
 })()
-
