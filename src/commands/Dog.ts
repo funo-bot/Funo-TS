@@ -2,9 +2,9 @@ import { Message } from 'discord.js'
 
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
+import { Image } from '../utils'
 
 import fetch from 'node-fetch'
-import { Image } from 'utils'
 
 export const Dog = new (class extends Command {
 
