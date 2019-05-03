@@ -14,7 +14,7 @@ export const Cat = new (class extends Command {
   public aliases = ['kitten', 'cats']
 
   public async run(funo: Funo, msg: Message) {
-    const body: any = fetch('http://aws.random.cat/meow')
+    const body: any = await fetch('http://aws.random.cat/meow')
       .then(res => res.json())
 
       msg.channel.send(Image(body.url, 'Meow 🐱')
