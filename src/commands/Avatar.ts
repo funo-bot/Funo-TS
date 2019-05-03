@@ -13,8 +13,7 @@ export const Avatar = new (class extends Command {
     public permissions = []
 
     public async run(funo: Funo, msg: Message, args: string[]) {
-        let target = msg.mentions.users.first() || msg.author;
-
+        let target = msg.mentions.users.first() || msg.author
         msg.channel.send(Image(target.displayAvatarURL, 'Avatar for ' + target.username))
     }
 
