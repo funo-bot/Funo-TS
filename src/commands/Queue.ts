@@ -3,7 +3,7 @@ import { Message } from 'discord.js'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild } from '../Guild'
-import { Error, RichEmbed } from '../utils'
+import { Error, RichEmbed, Track } from '../utils'
 
 export const Queue = new (class extends Command {
 
@@ -24,6 +24,10 @@ export const Queue = new (class extends Command {
         ]),
       ),
     )
+
+    if(guild.player && guild.player.playing) {
+      msg.channel.send(Track('Current Song', guild.queue[0]))
+    }
   }
 
 })()
