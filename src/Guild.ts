@@ -50,8 +50,6 @@ export class Guild {
     if (!player) return
 
     player.on('end', () => {
-      this.queue.shift()
-
       if (this.track > -1 && this.queue[this.track + 1]) {
         player.play(this.queue[++this.track].track)
 
