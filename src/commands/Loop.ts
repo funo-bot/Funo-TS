@@ -21,7 +21,7 @@ export const Loop = new (class extends Command {
     else if(loop === 'track') guild.loop = 'track'
     else {
       if(guild.loop === 'off') guild.loop = 'queue'
-      if(guild.loop === 'queue') guild.loop = 'track'
+      else if(guild.loop === 'queue') guild.loop = 'track'
       else guild.loop = 'off'
     }
 
