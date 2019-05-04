@@ -22,6 +22,16 @@ export class Guild {
 
   constructor(private guild: GuildClass, private funo: Funo) { }
 
+  public async initPlayer(channelId: string) {
+    if(this.realPlayer) return this.realPlayer
+
+    return this.realPlayer = await this.funo.playerManager.join({
+      guild: this.guild.id,
+      channel: channelId,
+      host: this.funo.playerManager.nodes.first().host,
+    })
+  }
+
   public get player() {
     return this.realPlayer
   }

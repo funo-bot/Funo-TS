@@ -29,15 +29,7 @@ export const Play = new (class extends Command {
 
     if (!results.length) return msg.channel.send(Error('No results were found for that query'))
 
-    let player = guild.player
-
-    if (!player) {
-      player = guild.player = await funo.playerManager.join({
-        guild: msg.guild.id,
-        channel: msg.member.voiceChannel.id,
-        host: funo.playerManager.nodes.first().host,
-      })
-    }
+    const player = await guild.initPlayer(msg.member.voiceChannel.id)
 
     const { link, thumbnails } = results[0]
 
