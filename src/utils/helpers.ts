@@ -37,6 +37,7 @@ export function Error(msg: string) {
 export function Image(src: string, title?: string, desc?: string) {
   const e = new RE()
     .setImage(src)
+    .setColor('PURPLE')
 
   if (title) e.setTitle(title)
   if (desc) e.setDescription(desc)
@@ -51,6 +52,7 @@ export function Track(embedTitle: string, track: GuildTrack) {
     .setDescription(track.author)
     .setURL(track.link)
     .setFooter(`${track.duration} - Added by ${track.addedBy.tag}`)
+    .setColor('PURPLE')
 
   if (track.thumb) re.setThumbnail(track.thumb)
 

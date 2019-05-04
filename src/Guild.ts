@@ -25,7 +25,7 @@ export class Guild {
   public async initPlayer(channelId: string) {
     if(this.realPlayer) return this.realPlayer
 
-    return this.realPlayer = await this.funo.playerManager.join({
+    return this.player = await this.funo.playerManager.join({
       guild: this.guild.id,
       channel: channelId,
       host: this.funo.playerManager.nodes.first().host,
