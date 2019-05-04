@@ -78,4 +78,12 @@ export class Guild {
     return track
   }
 
+  public clearQueue() {
+    if(!this.realPlayer) return
+
+    this.queue = []
+    this.realPlayer.stop()
+    this.player = null
+  }
+
 }

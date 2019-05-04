@@ -17,9 +17,7 @@ export const Dog = new (class extends Command {
     const body: any = await fetch('https://random.dog/woof.json')
       .then(res => res.json())
 
-    msg.channel.send(Image(body.url, 'Woof 🐶')
-      .setColor('PURPLE')
-    )
+    msg.channel.send(Image(body.url, 'Woof 🐶'))
   }
 
 })()
