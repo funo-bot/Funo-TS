@@ -5,6 +5,7 @@
 export * from './Avatar'
 export * from './Ban'
 export * from './Cat'
+export * from './Clear'
 export * from './Dog'
 export * from './GuildInfo'
 export * from './Play'
