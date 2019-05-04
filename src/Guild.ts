@@ -18,6 +18,8 @@ export class Guild {
 
   public queue: GuildTrack[] = []
   public queueChannel: TextChannel | null = null
+  public loop: 'off' | 'queue' | 'track' = 'off'
+  private track: number = -1
   private realPlayer: Player | null = null
 
   constructor(private guild: GuildClass, private funo: Funo) { }
@@ -50,26 +52,39 @@ export class Guild {
     player.on('end', () => {
       this.queue.shift()
 
-      if (this.queue.length) {
-        player.play(this.queue[0].track)
+      if (this.track > -1 && this.queue[this.track + 1]) {
+        player.play(this.queue[++this.track].track)
 
-        if (this.queueChannel) this.queueChannel.send(Track('Now Playing', this.queue[0]))
-      } else if (this.queueChannel) {
-        this.queueChannel.send(RichEmbed('End of queue, leaving channel'))
+        if (this.queueChannel) this.queueChannel.send(Track('Now Playing', this.queue[this.track]))
+      } else if(this.loop === 'track') {
+        player.play(this.queue[this.track].track)
+      } else if(this.loop === 'queue') {
+        this.track = 0
+        player.play(this.queue[this.track].track)
+
+        if (this.queueChannel) this.queueChannel.send(Track('Now Playing', this.queue[this.track]))
+      } else {
+        if (this.queueChannel) this.queueChannel.send(RichEmbed('End of queue, leaving channel'))
         this.player = null
         this.queueChannel = null
       }
     })
   }
 
+  public get currentTrack() {
+    if(!this.track || !this.queue[this.track]) return null
+
+    return this.queue[this.track]
+  }
+
   public skipSong() {
     if (!this.realPlayer) return null
 
+    const track = this.queue[this.track + 1] || null
+
     this.realPlayer.stop()
 
-    if (this.queue.length <= 1) return null
-
-    return this.queue[1]
+    return track
   }
 
   public removeSong(num: number) {

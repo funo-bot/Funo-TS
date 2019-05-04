@@ -25,8 +25,8 @@ export const Queue = new (class extends Command {
       ),
     )
 
-    if(guild.player && guild.player.playing) {
-      msg.channel.send(Track('Current Song', guild.queue[0]))
+    if(guild.player && guild.player.playing && guild.currentTrack) {
+      msg.channel.send(Track('Current Song', guild.currentTrack))
     }
   }
 
