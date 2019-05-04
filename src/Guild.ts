@@ -71,6 +71,17 @@ export class Guild {
     })
   }
 
+  public enqueue(track: GuildTrack) {
+    return this.queue.push(track)
+  }
+
+  public play(track: number) {
+    if(!this.player) return
+
+    this.track = track - 1
+    this.player.play(this.queue[this.track].track)
+  }
+
   public get currentTrack() {
     if(!this.track || !this.queue[this.track]) return null
 

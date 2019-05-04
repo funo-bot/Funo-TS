@@ -29,7 +29,7 @@ export const Play = new (class extends Command {
 
     if (!results.length) return msg.channel.send(Error('No results were found for that query'))
 
-    const player = await guild.initPlayer(msg.member.voiceChannel.id)
+    await guild.initPlayer(msg.member.voiceChannel.id)
 
     const { link, thumbnails } = results[0]
 
@@ -48,12 +48,12 @@ export const Play = new (class extends Command {
 
     guild.queueChannel = (msg.channel as TextChannel)
     if (!guild.queue.length) {
-      guild.queue.push(guildTrack)
-      player.play(track)
+      const trackNo = guild.enqueue(guildTrack)
+      guild.play(trackNo)
 
       msg.channel.send(Track('Now Playing', guildTrack))
     } else {
-      guild.queue.push(guildTrack)
+      guild.enqueue(guildTrack)
 
       msg.channel.send(Track('Added to Queue', guildTrack))
     }
