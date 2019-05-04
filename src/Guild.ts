@@ -38,6 +38,7 @@ export class Guild {
 
   public set player(player: Player | null) {
     if(this.realPlayer) {
+      this.realPlayer.stop()
       this.realPlayer.disconnect()
       this.realPlayer.destroy()
       this.funo.playerManager.leave(this.guild.id)
@@ -82,7 +83,6 @@ export class Guild {
     if(!this.realPlayer) return
 
     this.queue = []
-    this.realPlayer.stop()
     this.player = null
   }
 

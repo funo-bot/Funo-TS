@@ -3,7 +3,7 @@ import { Message, TextChannel } from 'discord.js'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild } from '../Guild'
-import { Error } from '../utils'
+import { Error, RichEmbed } from '../utils'
 
 export const Clear = new (class extends Command {
 
@@ -18,6 +18,7 @@ export const Clear = new (class extends Command {
 
     guild.queueChannel = (msg.channel as TextChannel)
     guild.clearQueue()
+    msg.channel.send(RichEmbed('Queue cleared, leaving channel'))
   }
 
 })()
