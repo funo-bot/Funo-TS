@@ -22,20 +22,23 @@ export class Funo extends Client {
     [k: string]: Guild,
   } = {}
 
-  constructor(token: string, public config: Config) {
+  private initd: boolean = false
+
+  constructor(private loginToken: string, public config: Config) {
     super()
 
     this.db = new DB(config.db.url, config.db.user, config.db.password, config.db.name)
 
     this.on('message', msg => this.onMessageReceived(msg))
-
-    this.doLogin(token)
   }
 
-  private async doLogin(token: string) {
+  public async init() {
+    if(this.initd) return
+    this.initd = true
+
     await this.db.init()
 
-    await this.login(token)
+    await this.login(this.loginToken)
 
     this.playerManager = new PlayerManager(this, [
       { host: this.config.music.lavalinkHost, port: this.config.music.lavalinkPort, password: 'pass' },
@@ -44,9 +47,17 @@ export class Funo extends Client {
       shards: 0,
     })
 
+    for await(const [sf, guild] of this.guilds) {
+      this.guildInstances[guild.id] = new Guild(guild, this)
+    }
+
     this.logger.info('Logged in as ' + this.user.username)
 
     await this.loadCommands()
+  }
+
+  public getGuild(id: string) {
+    return this.guildInstances[id] || null
   }
 
   private async loadCommands() {

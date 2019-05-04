@@ -17,7 +17,7 @@ export const Loop = new (class extends Command {
     const loop = typeof args[0] === 'string' ? args[0].toLowerCase() : ''
 
     if(loop === 'off') guild.loop = 'off'
-    else if(loop === 'queue') guild.loop = 'queue'
+    else if(loop === 'queue' || loop === 'on') guild.loop = 'queue'
     else if(loop === 'track') guild.loop = 'track'
     else {
       if(guild.loop === 'off') guild.loop = 'queue'

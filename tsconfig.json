@@ -6,6 +6,7 @@
       "es6",
       "esnext"
     ],
+    "paths" : {"*": ["@types/*"]},
     "rootDir": ".",
     "baseUrl": "src/",
     "moduleResolution": "node",

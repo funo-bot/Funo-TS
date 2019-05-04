@@ -1,6 +1,5 @@
 import { Message, TextChannel } from 'discord.js'
 import fetch from 'node-fetch'
-import search from 'youtube-search'
 
 import { Node } from 'discord.js-lavalink'
 import { URLSearchParams } from 'url'
@@ -20,69 +19,24 @@ export const Play = new (class extends Command {
   public async run(funo: Funo, msg: Message, args: string[], guild: Guild) {
     if (!msg.member.voiceChannel) return msg.channel.send(Error('You must be in a voice channel to use this command'))
 
-    const { results, pageInfo } = await search(args.join(' '), {
-      maxResults: 1,
-      key: funo.config.music.ytKey,
-      // videoCategoryId: '10',
-      // type: 'video',
-    })
+    const { results, pageInfo } = await guild.ytSearch(args.join(' '))
 
     if (!results.length) return msg.channel.send(Error('No results were found for that query'))
 
     await guild.initPlayer(msg.member.voiceChannel.id)
 
-    const { link, thumbnails } = results[0]
-
-    const { track, info: { title, author, length } } = await this.getTrackByLink(link, funo.playerManager.nodes.first())
-
-    const guildTrack: GuildTrack = {
-      link,
-      track,
-      title,
-      author,
-      length,
-      duration: this.duration(length),
-      thumb: thumbnails.high ? thumbnails.high.url : null,
-      addedBy: msg.author,
-    }
+    const track = await guild.getTrack(results[0], msg.author)
+    if (!track) return msg.channel.send(Error('An unknown error occurred'))
 
     guild.queueChannel = (msg.channel as TextChannel)
     if (!guild.queue.length) {
-      const trackNo = guild.enqueue(guildTrack)
+      const trackNo = guild.enqueue(track)
       guild.play(trackNo)
-
-      msg.channel.send(Track('Now Playing', guildTrack))
     } else {
-      guild.enqueue(guildTrack)
+      guild.enqueue(track)
 
-      msg.channel.send(Track('Added to Queue', guildTrack))
+      msg.channel.send(Track('Added to Queue', track))
     }
-  }
-
-  private async getTrackByLink(link: string, node: Node) {
-    const params = new URLSearchParams()
-    params.append('identifier', `ytsearch: ${link}`)
-
-    return fetch(`http://${node.host}:${node.port}/loadtracks?${params.toString()}`, {
-      headers: {
-        Authorization: node.password || '',
-      },
-    }).then(res => res.json())
-      .then(data => data.tracks[0])
-      .catch(err => {
-        return null
-      })
-  }
-
-  private duration(ms: number) {
-    const seconds = Math.floor((ms / 1000) % 60),
-      minutes = Math.floor((ms / (1000 * 60)) % 60),
-      hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
-
-    const m = (minutes < 10) ? '0' + minutes : minutes
-    const s = (seconds < 10) ? '0' + seconds : seconds
-
-    return m + ':' + s
   }
 
 })()
