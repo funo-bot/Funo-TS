@@ -82,18 +82,16 @@ io.on('connect', socket => {
       const guild = Funo.getGuild(id)
       if(!guild) return
 
-      const { results, pageInfo } = await guild.ytSearch(query)
-      console.log(results[0])
-
-      await guild.initPlayer('566033320014774292')
-
       if(!me) me = await api.me()
 
-      const track = await guild.getTrack(results[0], {
+      const track = await guild.ytSearch(query, {
         id: me.id,
         tag: `${me.username}#${me.discriminator}`,
       })
+      console.log(track)
       if (!track) return
+
+      await guild.initPlayer('566033320014774292')
 
       const channel = guild.queueChannel = new TextChannel(guild.guild, {
         id: '566028853814755356',

@@ -8,14 +8,25 @@ import { URLSearchParams } from 'url'
 import { Funo } from './Funo'
 import { RichEmbed, Track } from './utils'
 
-export interface GuildTrack {
+export interface GuildTrackBase {
+  title: string,
+  author: {
+    name: string,
+    link: string,
+    verified: boolean,
+  },
   link: string,
   thumb: string | null,
-  track: string,
-  title: string,
-  author: string,
-  length: number,
   duration: string,
+}
+
+export interface GuildUser {
+  id: string,
+  tag: string,
+}
+
+export interface GuildTrack extends GuildTrackBase {
+  track: string,
   addedBy: {
     id: string,
     tag: string,
@@ -139,7 +150,7 @@ export class Guild {
     this.player = null
   }
 
-  public async ytSearch(query: string): Promise<{ results: any[], pageInfo: {} }> {
+  public async ytSearch(query: string, addedBy: GuildUser): Promise<GuildTrack | null> {
     // return search(query, {
     //   maxResults: 1,
     //   key: this.funo.config.music.ytKey,
@@ -147,37 +158,44 @@ export class Guild {
     //   // type: 'video',
     // })
     return new Promise(resolve => {
-      ytsr(query, (err: any, result: any) => {
-        console.log(result)
-        resolve({ results: [], pageInfo: {} })
+      ytsr(query, {
+        limit: 5,
+      }, async (err: any, result: any) => {
+        if(!result.items || !result.items[0]) return resolve(null)
+
+        const { title, link, thumbnail, duration, author: { name, ref, verified } } = result.items[0]
+
+        resolve(await this.getTrack({
+          title,
+          link,
+          author: {
+            name,
+            link: ref,
+            verified,
+          },
+          duration,
+          thumb: thumbnail,
+        }, addedBy))
       })
     })
   }
 
-  public async getTrack(
-    { link, thumbnails }: YouTubeSearchResults,
-    addedBy: { id: string, tag: string },
-  ): Promise<GuildTrack | null> {
+  public async getTrack(base: GuildTrackBase, addedBy: GuildUser): Promise<GuildTrack | null> {
     return new Promise((resolve, reject) => {
       const node = this.funo.playerManager.nodes.first()
 
       const params = new URLSearchParams()
-      params.append('identifier', `ytsearch: ${link}`)
+      params.append('identifier', `ytsearch: ${base.link}`)
 
       fetch(`http://${node.host}:${node.port}/loadtracks?${params.toString()}`, {
         headers: {
           Authorization: node.password || '',
         },
       }).then(res => res.json())
-        .then(({ tracks: [{ track, info: { title, author, length } }] }) => {
+        .then(({ tracks: [{ track }] }) => {
           resolve({
-            link,
+            ...base,
             track,
-            title,
-            author,
-            length,
-            duration: this.duration(length),
-            thumb: thumbnails.high ? thumbnails.high.url : null,
             addedBy,
           })
         })

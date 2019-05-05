@@ -19,14 +19,11 @@ export const Play = new (class extends Command {
   public async run(funo: Funo, msg: Message, args: string[], guild: Guild) {
     if (!msg.member.voiceChannel) return msg.channel.send(Error('You must be in a voice channel to use this command'))
 
-    const { results, pageInfo } = await guild.ytSearch(args.join(' '))
+    const track = await guild.ytSearch(args.join(' '), msg.author)
 
-    if (!results.length) return msg.channel.send(Error('No results were found for that query'))
+    if (!track) return msg.channel.send(Error('No results were found for that query'))
 
     await guild.initPlayer(msg.member.voiceChannel.id)
-
-    const track = await guild.getTrack(results[0], msg.author)
-    if (!track) return msg.channel.send(Error('An unknown error occurred'))
 
     guild.queueChannel = (msg.channel as TextChannel)
     if (!guild.queue.length) {
