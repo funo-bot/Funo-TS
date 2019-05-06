@@ -1,6 +1,5 @@
 import { Guild as GuildClass, TextChannel } from 'discord.js'
 import { Player } from 'discord.js-lavalink'
-import search, { YouTubeSearchResults } from 'youtube-search'
 import ytsr from 'ytsr'
 
 import fetch from 'node-fetch'
@@ -138,7 +137,7 @@ export class Guild {
 
   public removeSong(num: number) {
     const track = this.queue[num - 1]
-    this.queue.splice(num - 1)
+    this.queue.splice(num - 1, 1)
 
     return track
   }
@@ -151,12 +150,6 @@ export class Guild {
   }
 
   public async ytSearch(query: string, addedBy: GuildUser): Promise<GuildTrack | null> {
-    // return search(query, {
-    //   maxResults: 1,
-    //   key: this.funo.config.music.ytKey,
-    //   // videoCategoryId: '10',
-    //   // type: 'video',
-    // })
     return new Promise(resolve => {
       ytsr(query, {
         limit: 5,

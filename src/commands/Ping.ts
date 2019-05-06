@@ -3,7 +3,7 @@ import { Message } from 'discord.js'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild } from '../Guild'
-import { Error, RichEmbed, Track } from '../utils'
+import { RichEmbed } from '../utils'
 
 export const Ping = new (class extends Command {
 
