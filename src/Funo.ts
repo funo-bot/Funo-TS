@@ -77,7 +77,7 @@ export class Funo extends Client {
   }
 
   private escape(str: string) {
-      return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
   }
 
   private async onMessageReceived(msg: Message) {
