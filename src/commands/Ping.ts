@@ -5,6 +5,7 @@ import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild } from '../Guild'
 import { Error, RichEmbed } from '../utils'
+import { platform } from 'os';
 
 export const Ping = new (class extends Command {
 
@@ -24,21 +25,41 @@ export const Ping = new (class extends Command {
 
     if(pingCount > 10) return message.edit(Error('A maximum of 10 requests can be made'))
 
+    const start = Date.now()
     const result = await ping.probe(args[0], {
       timeout: 10,
       min_reply: pingCount,
     }).catch((err: any) => {
       return message.edit(Error('An unknown error occurred whilst making your request'))
     })
+    const end = Date.now()
 
     if(!result.alive) return message.edit(Error('Host unreachable'))
 
+    let min = result.min
+    let avg = result.min
+    let max = result.min
+
+    if(platform() === 'linux') {
+      const res = /min\/avg\/max = (.*?)\/(.*?)\/(.*?) /.exec(result.output)
+      if(!res) return message.edit(Error('An unknown error occurred whilst making your request'))
+
+      min = res[1]
+      avg = res[2]
+      max = res[3]
+    }
+
+    min = parseFloat(min).toFixed(2)
+    avg = parseFloat(avg).toFixed(2)
+    max = parseFloat(max).toFixed(2)
+
     message.edit(RichEmbed('Ping Results', `${result.host} (${result.numeric_host})`, [
-      ['Average', `${parseInt(result.avg, 10)}ms`],
-      ['Min', `${parseInt(result.min, 10)}ms`],
-      ['Max', `${parseInt(result.max, 10)}ms`],
+      ['Average', `${parseInt(avg, 10)}ms`],
+      ['Min', `${parseInt(min, 10)}ms`],
+      ['Max', `${parseInt(max, 10)}ms`],
       ['# of requests', pingCount],
-      ['Standard Deviation', `${parseInt(result.stddev, 10)}ms`],
+      ['Total Time', `${end - start}ms`],
+      ['Range', `${max - min}ms`],
     ]))
   }
 
