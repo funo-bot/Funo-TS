@@ -1,11 +1,11 @@
 import { Message } from 'discord.js'
 import { promise as ping } from 'ping'
 
+import { platform } from 'os'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild } from '../Guild'
 import { Error, RichEmbed } from '../utils'
-import { platform } from 'os';
 
 export const Ping = new (class extends Command {
 
