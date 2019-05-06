@@ -76,6 +76,10 @@ export class Funo extends Client {
     }
   }
 
+  private escape(str: string) {
+      return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+  }
+
   private async onMessageReceived(msg: Message) {
     if (!msg.guild) return
 
@@ -89,7 +93,7 @@ export class Funo extends Client {
       )
     ) {
       const content = msg.content
-        .replace(new RegExp(`^(${prefix})`, 'gim'), '')
+        .replace(new RegExp(`^(${this.escape(prefix)})`, 'gim'), '')
         .replace(new RegExp(`^(<@!?${this.user.id}>)`, 'gim'), '')
         .trim()
         .toLowerCase()
