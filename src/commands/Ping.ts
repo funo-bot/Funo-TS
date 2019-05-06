@@ -53,7 +53,7 @@ export const Ping = new (class extends Command {
     avg = parseFloat(avg).toFixed(2)
     max = parseFloat(max).toFixed(2)
 
-    message.edit(RichEmbed('Ping Results', `${result.host} (${result.numeric_host})`, [
+    message.edit(RichEmbed('Ping Results', `${result.host} (${result.numeric_host.replace(')', '')})`, [
       ['Average', `${parseInt(avg, 10)}ms`],
       ['Min', `${parseInt(min, 10)}ms`],
       ['Max', `${parseInt(max, 10)}ms`],
