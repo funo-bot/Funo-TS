@@ -6,7 +6,7 @@ import { URLSearchParams } from 'url'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
 import { Guild, GuildTrack } from '../Guild'
-import { Error, Track } from '../utils'
+import { Error, RichEmbed, Track } from '../utils'
 
 export const Play = new (class extends Command {
 
@@ -19,20 +19,27 @@ export const Play = new (class extends Command {
   public async run(funo: Funo, msg: Message, args: string[], guild: Guild) {
     if (!msg.member.voiceChannel) return msg.channel.send(Error('You must be in a voice channel to use this command'))
 
-    const track = await guild.ytSearch(args.join(' '), msg.author)
+    const { tracks, playlist } = await guild.ytSearch(args.join(' '), msg.author)
 
-    if (!track) return msg.channel.send(Error('No results were found for that query'))
+    if (!tracks.length) return msg.channel.send(Error('No results were found for that query'))
 
     await guild.initPlayer(msg.member.voiceChannel.id)
 
     guild.queueChannel = (msg.channel as TextChannel)
-    if (!guild.queue.length) {
-      const trackNo = guild.enqueue(track)
-      guild.play(trackNo)
-    } else {
-      guild.enqueue(track)
 
-      msg.channel.send(Track('Added to Queue', track))
+    if(playlist) {
+      msg.channel.send(RichEmbed('Playlist Loaded', `${playlist.name} - ${tracks.length} songs`))
+    }
+
+    for(const track of tracks) {
+      if (!guild.queue.length) {
+        const trackNo = guild.enqueue(track)
+        guild.play(trackNo)
+      } else {
+        guild.enqueue(track)
+
+        if(!playlist) msg.channel.send(Track('Added to Queue', track))
+      }
     }
   }
 

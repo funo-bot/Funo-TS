@@ -20,7 +20,7 @@ export const Queue = new (class extends Command {
       RichEmbed(
         'Song Queue', '',
         guild.queue.map((t, i) => [
-          `${i + 1}. ${t.title}`, `${t.author.name} - Added by ${t.addedBy.tag}`, false,
+          `${i + 1}. ${t.title}`, `${t.author} - Added by ${t.addedBy.tag}`, false,
         ]),
       ),
     )

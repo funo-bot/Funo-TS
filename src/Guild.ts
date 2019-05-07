@@ -1,30 +1,23 @@
 import { Guild as GuildClass, TextChannel } from 'discord.js'
 import { Player } from 'discord.js-lavalink'
-import ytsr from 'ytsr'
-
 import fetch from 'node-fetch'
-import { URLSearchParams } from 'url'
+import { URL, URLSearchParams } from 'url'
+
 import { Funo } from './Funo'
 import { RichEmbed, Track } from './utils'
-
-export interface GuildTrackBase {
-  title: string,
-  author: {
-    name: string,
-    link: string,
-    verified: boolean,
-  },
-  link: string,
-  thumb: string | null,
-  duration: string,
-}
 
 export interface GuildUser {
   id: string,
   tag: string,
 }
 
-export interface GuildTrack extends GuildTrackBase {
+export interface GuildTrack {
+  id: string
+  title: string,
+  author: string,
+  link: string,
+  thumb: string | null,
+  duration: string,
   track: string,
   addedBy: {
     id: string,
@@ -33,24 +26,6 @@ export interface GuildTrack extends GuildTrackBase {
 }
 
 export class Guild {
-
-  public queue: GuildTrack[] = []
-  public queueChannel: TextChannel | null = null
-  public loop: 'off' | 'queue' | 'track' = 'off'
-  private track: number = -1
-  private realPlayer: Player | null = null
-
-  constructor(public guild: GuildClass, private funo: Funo) { }
-
-  public async initPlayer(channelId: string) {
-    if(this.realPlayer) return this.realPlayer
-
-    return this.player = await this.funo.playerManager.join({
-      guild: this.guild.id,
-      channel: channelId,
-      host: this.funo.playerManager.nodes.first().host,
-    })
-  }
 
   public get id() { return this.guild.id }
 
@@ -82,6 +57,30 @@ export class Guild {
         this.player = null
         this.queueChannel = null
       }
+    })
+  }
+
+  public get currentTrack() {
+    if(this.track < 0 || !this.queue[this.track]) return null
+
+    return this.queue[this.track]
+  }
+
+  public queue: GuildTrack[] = []
+  public queueChannel: TextChannel | null = null
+  public loop: 'off' | 'queue' | 'track' = 'off'
+  private track: number = -1
+  private realPlayer: Player | null = null
+
+  constructor(public guild: GuildClass, private funo: Funo) { }
+
+  public async initPlayer(channelId: string) {
+    if(this.realPlayer) return this.realPlayer
+
+    return this.player = await this.funo.playerManager.join({
+      guild: this.guild.id,
+      channel: channelId,
+      host: this.funo.playerManager.nodes.first().host,
     })
   }
 
@@ -119,12 +118,6 @@ export class Guild {
     })
   }
 
-  public get currentTrack() {
-    if(this.track < 0 || !this.queue[this.track]) return null
-
-    return this.queue[this.track]
-  }
-
   public skipSong() {
     if (!this.realPlayer) return null
 
@@ -149,51 +142,56 @@ export class Guild {
     this.player = null
   }
 
-  public async ytSearch(query: string, addedBy: GuildUser): Promise<GuildTrack | null> {
+  public async ytSearch(query: string, addedBy: GuildUser): Promise<{
+    tracks: GuildTrack[],
+    playlist: { name: string } | null,
+  }> {
     return new Promise(resolve => {
-      ytsr(query, {
-        limit: 5,
-      }, async (err: any, result: any) => {
-        if(!result.items || !result.items[0]) return resolve(null)
-
-        const { title, link, thumbnail, duration, author: { name, ref, verified } } = result.items[0]
-
-        resolve(await this.getTrack({
-          title,
-          link,
-          author: {
-            name,
-            link: ref,
-            verified,
-          },
-          duration,
-          thumb: thumbnail,
-        }, addedBy))
-      })
-    })
-  }
-
-  public async getTrack(base: GuildTrackBase, addedBy: GuildUser): Promise<GuildTrack | null> {
-    return new Promise((resolve, reject) => {
       const node = this.funo.playerManager.nodes.first()
 
-      const params = new URLSearchParams()
-      params.append('identifier', `ytsearch: ${base.link}`)
+      let identifier: string
 
-      fetch(`http://${node.host}:${node.port}/loadtracks?${params.toString()}`, {
+      if(query.startsWith('http://') || query.startsWith('https://')) identifier = `identifier=${encodeURI(query)}`
+      else {
+        const params = new URLSearchParams()
+        params.append('identifier', `ytsearch: ${query}`)
+        identifier = params.toString()
+      }
+
+      console.log(identifier)
+
+      fetch(`http://${node.host}:${node.port}/loadtracks?${identifier}`, {
         headers: {
           Authorization: node.password || '',
         },
       }).then(res => res.json())
-        .then(({ tracks: [{ track }] }) => {
-          resolve({
-            ...base,
-            track,
-            addedBy,
-          })
+        .then(res => {
+          switch(res.loadType.toUpperCase()) {
+            case 'TRACK_LOADED':
+            case 'SEARCH_RESULT':
+              return resolve({
+                tracks: [this.lavalinkToGuildTrack(res.tracks[0], addedBy)],
+                playlist: null,
+              })
+            case 'PLAYLIST_LOADED':
+              return resolve({
+                tracks: res.tracks.map((t: any) => this.lavalinkToGuildTrack(t, addedBy)),
+                playlist: {
+                  name: res.playlistInfo.name,
+                },
+              })
+            default:
+              return resolve({
+                tracks: [],
+                playlist: null,
+              })
+          }
         })
         .catch(err => {
-          resolve(null)
+          resolve({
+            tracks: [],
+            playlist: null,
+          })
         })
     })
   }
@@ -207,6 +205,21 @@ export class Guild {
     const s = (seconds < 10) ? '0' + seconds : seconds
 
     return m + ':' + s
+  }
+
+  private lavalinkToGuildTrack(llTrack: any, addedBy: GuildUser): GuildTrack {
+    const { track, info: { identifier, author, length, title, uri } } = llTrack
+
+    return {
+      track,
+      id: identifier,
+      author,
+      duration: this.duration(length),
+      title,
+      link: uri,
+      thumb: `https://img.youtube.com/vi/${identifier}/maxresdefault.jpg`,
+      addedBy,
+    }
   }
 
 }

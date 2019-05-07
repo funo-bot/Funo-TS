@@ -1,10 +1,10 @@
 import DiscordOauth from 'discord-oauth2'
 import Server from 'socket.io'
 
+import { TextChannel } from 'discord.js'
 import { API, Logger } from '.'
 import { RichEmbed, Track } from './helpers'
 import { Funo } from './init'
-import { TextChannel } from 'discord.js';
 
 export const io = Server()
 export const logger = new Logger('IO')
@@ -84,26 +84,28 @@ io.on('connect', socket => {
 
       if(!me) me = await api.me()
 
-      const track = await guild.ytSearch(query, {
+      const tracks = await guild.ytSearch(query, {
         id: me.id,
         tag: `${me.username}#${me.discriminator}`,
       })
-      console.log(track)
-      if (!track) return
+      // if (!tracks.length) return
 
-      await guild.initPlayer('566033320014774292')
+      // await guild.initPlayer('566033320014774292')
 
-      const channel = guild.queueChannel = new TextChannel(guild.guild, {
-        id: '566028853814755356',
-      })
-      if (!guild.queue.length) {
-        const trackNo = guild.enqueue(track)
-        guild.play(trackNo)
-      } else {
-        guild.enqueue(track)
+      // const channel = guild.queueChannel = new TextChannel(guild.guild, {
+      //   id: '566028853814755356',
+      // })
 
-        channel.send(Track('Added to Queue', track))
-      }
+      // for(const track of tracks) {
+      //   if (!guild.queue.length) {
+      //     const trackNo = guild.enqueue(track)
+      //     guild.play(trackNo)
+      //   } else {
+      //     guild.enqueue(track)
+
+      //     channel.send(Track('Added to Queue', track))
+      //   }
+      // }
     })
 
     socket.on('next', async id => {

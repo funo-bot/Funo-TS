@@ -1,1 +1,1 @@
-declare module 'ytsr';
+declare module 'ytsr'; // TODO: Properly type this

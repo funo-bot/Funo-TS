@@ -49,7 +49,7 @@ export function Track(embedTitle: string, track: GuildTrack) {
   const re = new RE()
     .setAuthor(embedTitle)
     .setTitle(track.title)
-    .setDescription(track.author.name)
+    .setDescription(track.author)
     .setURL(track.link)
     .setFooter(`${track.duration} - Added by ${track.addedBy.tag}`)
     .setColor('PURPLE')
