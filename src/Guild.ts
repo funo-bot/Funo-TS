@@ -1,7 +1,7 @@
 import { Guild as GuildClass, TextChannel } from 'discord.js'
 import { Player } from 'discord.js-lavalink'
 import fetch from 'node-fetch'
-import { URL, URLSearchParams } from 'url'
+import { URLSearchParams } from 'url'
 
 import { Funo } from './Funo'
 import { RichEmbed, Track } from './utils'
@@ -151,14 +151,13 @@ export class Guild {
 
       let identifier: string
 
-      if(query.startsWith('http://') || query.startsWith('https://')) identifier = `identifier=${encodeURI(query)}`
-      else {
+      if(query.startsWith('http://') || query.startsWith('https://')) {
+        identifier = `identifier=${encodeURI(query)}`
+      } else {
         const params = new URLSearchParams()
         params.append('identifier', `ytsearch: ${query}`)
         identifier = params.toString()
       }
-
-      console.log(identifier)
 
       fetch(`http://${node.host}:${node.port}/loadtracks?${identifier}`, {
         headers: {

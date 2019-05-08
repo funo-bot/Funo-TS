@@ -1,11 +1,8 @@
 import { Message, TextChannel } from 'discord.js'
-import fetch from 'node-fetch'
 
-import { Node } from 'discord.js-lavalink'
-import { URLSearchParams } from 'url'
 import { Category, Command } from '../Command'
 import { Funo } from '../Funo'
-import { Guild, GuildTrack } from '../Guild'
+import { Guild } from '../Guild'
 import { Error, RichEmbed, Track } from '../utils'
 
 export const Play = new (class extends Command {

@@ -96,9 +96,8 @@ export class Funo extends Client {
         .replace(new RegExp(`^(${this.escape(prefix)})`, 'gim'), '')
         .replace(new RegExp(`^(<@!?${this.user.id}>)`, 'gim'), '')
         .trim()
-        .toLowerCase()
       const contentParts = content.split(/\s/gm)
-      const cmdStr = contentParts[0]
+      const cmdStr = contentParts[0].toLowerCase()
       const args = contentParts.slice(1)
 
       if (!this.commands[cmdStr]) return
