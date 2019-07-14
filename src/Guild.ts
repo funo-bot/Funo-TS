@@ -34,7 +34,7 @@ export class Guild {
   }
 
   public set player(player: Player | null) {
-    if(this.realPlayer) {
+    if (this.realPlayer) {
       this.realPlayer.stop()
       this.realPlayer.disconnect()
       this.realPlayer.destroy()
@@ -48,9 +48,9 @@ export class Guild {
       if (this.track > -1 && this.queue[this.track + 1]) {
         const trackIndex = ++this.track
         this.play(trackIndex + 1)
-      } else if(this.loop === 'track') {
+      } else if (this.loop === 'track') {
         this.play(this.track + 1)
-      } else if(this.loop === 'queue') {
+      } else if (this.loop === 'queue') {
         this.play(1)
       } else {
         if (this.queueChannel) this.queueChannel.send(RichEmbed('End of queue, leaving channel'))
@@ -61,7 +61,7 @@ export class Guild {
   }
 
   public get currentTrack() {
-    if(this.track < 0 || !this.queue[this.track]) return null
+    if (this.track < 0 || !this.queue[this.track]) return null
 
     return this.queue[this.track]
   }
@@ -75,7 +75,7 @@ export class Guild {
   constructor(public guild: GuildClass, private funo: Funo) { }
 
   public async initPlayer(channelId: string) {
-    if(this.realPlayer) return this.realPlayer
+    if (this.realPlayer) return this.realPlayer
 
     return this.player = await this.funo.playerManager.join({
       guild: this.guild.id,
@@ -100,7 +100,7 @@ export class Guild {
   }
 
   public play(track: number) {
-    if(!this.player) return
+    if (!this.player) return
 
     this.track = track - 1
     this.player.play(this.queue[this.track].track)
@@ -116,6 +116,10 @@ export class Guild {
       },
       trackNo: this.track,
     })
+  }
+
+  public loadPlaylist() {
+    // 
   }
 
   public skipSong() {
@@ -136,7 +140,7 @@ export class Guild {
   }
 
   public clearQueue() {
-    if(!this.realPlayer) return
+    if (!this.realPlayer) return
 
     this.queue = []
     this.player = null
@@ -151,7 +155,7 @@ export class Guild {
 
       let identifier: string
 
-      if(query.startsWith('http://') || query.startsWith('https://')) {
+      if (query.startsWith('http://') || query.startsWith('https://')) {
         identifier = `identifier=${encodeURI(query)}`
       } else {
         const params = new URLSearchParams()
@@ -165,7 +169,7 @@ export class Guild {
         },
       }).then(res => res.json())
         .then(res => {
-          switch(res.loadType.toUpperCase()) {
+          switch (res.loadType.toUpperCase()) {
             case 'TRACK_LOADED':
             case 'SEARCH_RESULT':
               return resolve({
