@@ -56,6 +56,7 @@ export class Guild {
         if (this.queueChannel) this.queueChannel.send(RichEmbed('End of queue, leaving channel'))
         this.player = null
         this.queueChannel = null
+        this.queue = []
       }
     })
   }
