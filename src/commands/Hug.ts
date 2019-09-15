@@ -16,10 +16,8 @@ export const Hug = new (class extends Command {
   public async run(funo: Funo, msg: Message, args: string[]) {
     const member = msg.guild.member(msg.mentions.users.first() || args[0])
 
-    const neko = new client()
-
-    neko.sfw.hug().then(imageBody => {
-      msg.channel.send(Image(imageBody.url, `${msg.author} hugs ${member}`))
+    new client().sfw.hug().then(imageBody => {
+      msg.channel.send(Image(imageBody.url, '', `${msg.author} hugs ${member}`))
     })
   }
 })
