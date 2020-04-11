@@ -1,6 +1,6 @@
 
-import { Funo } from './src/utils/init'
-import { io, logger, port } from './src/utils/socket'
+import { Funo } from './utils/init'
+import { io, logger, port } from './utils/socket'
 
 (async () => {
   await Funo.init()
