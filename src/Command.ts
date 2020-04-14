@@ -19,6 +19,8 @@ export abstract class Command {
   public aliases: string[] = []
   public permissions: string[] = []
 
+  public showInHelp: boolean = true
+
   public abstract run(funo: Funo, msg: Message, args: string[], guild: Guild): Promise<any>
 
 }
