@@ -2,6 +2,8 @@ import { Collection, Db, MongoClient } from 'mongodb'
 
 import { GuildConfig } from '../interfaces/GuildConfig'
 import { defaultConfig, Logger } from '../utils'
+import { Guild } from '../Guild'
+import { timingSafeEqual } from 'crypto'
 
 export class DB {
 
@@ -68,6 +70,17 @@ export class DB {
     await this.guilds.updateOne({ guildId }, {
       $set: doc,
     }, { upsert: true })
+  }
+
+  public async initGuild(guild: Guild) {
+    const result = await this.guilds.findOne({ guildId: guild.id })
+
+    if (!result) {
+      await this.guilds.insertOne({
+        guildId: guild.id,
+        ...defaultConfig,
+      })
+    }
   }
 
 }

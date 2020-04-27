@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js'
+import { Client, Message, Guild as DGuild } from 'discord.js'
 import { PlayerManager } from 'discord.js-lavalink'
 
 import { Command } from './Command'
@@ -30,6 +30,7 @@ export class Funo extends Client {
     this.db = new DB(config.db.url, config.db.user, config.db.password, config.db.name)
 
     this.on('message', msg => this.onMessageReceived(msg))
+    this.on('guildCreate', guild => this.onGuildCreate(guild))
   }
 
   public async init() {
@@ -103,7 +104,7 @@ export class Funo extends Client {
       if (!this.commands[cmdStr]) return
 
       let guild: Guild
-      if(this.guildInstances[msg.guild.id]) {
+      if (this.guildInstances[msg.guild.id]) {
         guild = this.guildInstances[msg.guild.id]
       } else {
         guild = new Guild(msg.guild, this)
@@ -115,6 +116,10 @@ export class Funo extends Client {
         //
       })
     }
+  }
+  
+  private onGuildCreate(guild: DGuild) {
+    this.db.initGuild(new Guild(guild, this))
   }
 
 }
