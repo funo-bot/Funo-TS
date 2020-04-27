@@ -3,7 +3,6 @@ import { Collection, Db, MongoClient } from 'mongodb'
 import { GuildConfig } from '../interfaces/GuildConfig'
 import { defaultConfig, Logger } from '../utils'
 import { Guild } from '../Guild'
-import { timingSafeEqual } from 'crypto'
 
 export class DB {
 
