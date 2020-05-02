@@ -34,7 +34,7 @@ export class Funo extends Client {
   }
 
   public async init() {
-    if(this.initd) return
+    if (this.initd) return
     this.initd = true
 
     await this.db.init()
@@ -48,7 +48,7 @@ export class Funo extends Client {
       shards: 0,
     })
 
-    for await(const [sf, guild] of this.guilds) {
+    for await (const [sf, guild] of this.guilds) {
       this.guildInstances[guild.id] = new Guild(guild, this)
     }
 
@@ -117,7 +117,7 @@ export class Funo extends Client {
       })
     }
   }
-  
+
   private onGuildCreate(guild: DGuild) {
     this.db.initGuild(new Guild(guild, this))
   }
