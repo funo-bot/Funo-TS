@@ -16,7 +16,7 @@ export const Play = new (class extends Command {
   public async run(funo: Funo, msg: Message, args: string[], guild: Guild) {
     if (!msg.member.voiceChannel) return msg.channel.send(Error('You must be in a voice channel to use this command'))
 
-    const { tracks, playlist } = await guild.ytSearch(args.join(' '), msg.author)
+    const { tracks, playlist } = await guild.searchTrack(args.join(' '), msg.author)
 
     if (!tracks.length) return msg.channel.send(Error('No results were found for that query'))
 

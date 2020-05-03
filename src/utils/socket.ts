@@ -84,7 +84,7 @@ io.on('connect', socket => {
 
       if(!me) me = await api.me()
 
-      const tracks = await guild.ytSearch(query, {
+      const tracks = await guild.searchTrack(query, {
         id: me.id,
         tag: `${me.username}#${me.discriminator}`,
       })

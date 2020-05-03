@@ -147,7 +147,7 @@ export class Guild {
     this.player = null
   }
 
-  public async ytSearch(query: string, addedBy: GuildUser): Promise<{
+  public async searchTrack(query: string, addedBy: GuildUser): Promise<{
     tracks: GuildTrack[],
     playlist: { name: string } | null,
   }> {
