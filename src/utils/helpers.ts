@@ -58,3 +58,15 @@ export function Track(embedTitle: string, track: GuildTrack) {
 
   return re
 }
+
+export function shuffleArr(arr: Array<any>) {
+  let inputArray: any[] = arr
+  for (let i: number = inputArray.length - 1; i >= 0; i--) {
+    let randomIndex: number = Math.floor(Math.random() * (i + 1))
+    let itemAtIndex: number = inputArray[randomIndex]
+
+    inputArray[randomIndex] = inputArray[i]
+    inputArray[i] = itemAtIndex
+  }
+  return inputArray
+}
